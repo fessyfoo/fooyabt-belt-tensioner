@@ -9,17 +9,14 @@ $fa=3;
 // 5.5 hole for pully bolt
 
 d_pulley           = 22;
-d_pulley_bolt_hold = 5.5;
 w_pulley           = 11;
+w_pulley_axel_hole = 5.5; // m5 + tolerance
 w_extrusion        = 20;
-d_puller           = w_extrusion;
+d_puller           = 24;
 d_puller_tol       = d_puller + 1;
 pitch              = 2;
 groove             = false;
 thread_size        = pitch * 1.0;
-
-dn = sqrt(pow(20,2)*2);
-echo(dn=dn);
 
 function hyp(a,b) = sqrt(pow(a,2) + pow(b,2));
 
@@ -28,7 +25,7 @@ module nut(tol=0.75) {
   h = 4;
   w = 3;
   d_tol = tol * 2;
-  dI = w_extrusion + d_tol;
+  dI = d_puller + d_tol;
   dO = w*2 + dI;
 
   hC = h > 2*pitch ?  h : 2*pitch;
@@ -56,12 +53,13 @@ module nut(tol=0.75) {
 }
 
 module test_thread(h=10,pitch=pitch) {
-  wC = w_extrusion / 2;
-  translate([-wC/2,-wC/2]) cube([wC, wC, h*2]);
+  wC = d_puller / 2;
+  translate([-wC/2,-wC/2]) 
+    cube([wC, wC, h*2]);
   metric_thread(
     groove = groove,
     thread_size = thread_size,
-    diameter=w_extrusion,
+    diameter=d_puller,
     length=h+2,
     internal=false,
     pitch = pitch,
@@ -79,13 +77,13 @@ module puller(fast=false) {
   difference() {
     union () {
       if (fast) {
-        cylinder(d=w_extrusion, h=h_total);
+        cylinder(d=d_puller, h=h_total);
       } else {
-        cylinder(d=w_extrusion, h=h_base);
+        cylinder(d=d_puller, h=h_base);
         translate([0,0,h_base]) metric_thread(
           groove      = groove,
           thread_size = thread_size,
-          diameter    = w_extrusion,
+          diameter    = d_puller,
           length      = h_threads,
           internal    = false,
           pitch       = pitch,
@@ -95,16 +93,21 @@ module puller(fast=false) {
       }
     }
 
+    dn = sqrt(pow(d_puller,2)*2);
+    echo(dn=dn);
+
     translate([-dn/2,-(w_pulley + 1)/2,-1]) 
       cube([dn, w_pulley + 1, d_pulley + 2]);
 
+    // axel holes
     translate([0,0,d_pulley/2])
-    rotate([90,0,0])
-    translate([0,0,-(w_extrusion + 2)/2])
-    cylinder(d=d_pulley_bolt_hold, h=w_extrusion + 2);
+      rotate([90,0,0])
+        translate([0,0,-(d_puller + 2)/2])
+          cylinder(d=w_pulley_axel_hole, h=d_puller + 2);
 
+    // square notches
     translate([0,0,-4])
-    base_pillars(cutouts = true);
+      base_pillars(cutouts = true);
 
   }
 
@@ -116,34 +119,15 @@ module base_pillars(cutouts=false, height=d_pulley + 10 + 2) {
   for (i=[0:3]) {
     rotate(i*90)
     translate([lS,lS,-1])
-    cube([w_extrusion, w_extrusion, height]);
-  }
-}
-
-module thread_inverse(h=20) {
-  difference() {
-    cylinder(d=w_extrusion * 1.25, h = h);
-    translate([0,0,-1]) metric_thread(diameter=w_extrusion,length=h+2, internal=false);
-  }
-}
-
-// translate([-30,30]) puller();
-// translate([30,30,0]) nut();
-
-// translate([30,0,0]) nut();
-// test_thread();
-
-module test_3_size_nuts () {
-  for(i = [0:2]) { 
-    translate([i * 35,0,0]) scale(1 + i * .05) nut();
-    echo ("blah: ", 1 + i *.05);
+    cube([d_puller, d_puller, height]);
   }
 }
 
 module case () {
   h_case = 24;
   w_flanges = 4;
-  d_case = w_extrusion + w_flanges * 2;
+  d_case = d_puller + w_flanges * 2;
+  w_case = w_extrusion + w_flanges * 2;
   w_channel = (5.9 + 0.5) * 2;
   h_channel = h_case - w_flanges;
 
@@ -153,7 +137,7 @@ module case () {
       translate([0,0,w_flanges])
       cylinder(d=d_case, h=h_case + w_flanges);
       translate([0,0,w_flanges/2])
-        cube([d_case, d_case, w_flanges], center=true);
+        cube([w_case, w_case, w_flanges], center=true);
     }
 
     rotate(90)
@@ -166,6 +150,7 @@ module case () {
     translate([0,0,w_flanges/2])
       cube([w_extrusion + 0.5, w_extrusion + 0.5, w_flanges + 1], center=true);
 
+    translate([0,0,w_flanges])
     difference() {
       translate([0,0,-1]) 
       cylinder(d=d_puller_tol, h = h_case + w_flanges * 2 + 2);
@@ -177,12 +162,10 @@ module case () {
 
 }
 
-case();
-puller();
 
-// case();
-// puller(false);
-// translate([0,0,28.2]) nut();
+case();
+puller(false);
+translate([0,0,28.2]) nut();
 // 
 // nut();
 // translate([30,0,0]) test_thread();
