@@ -144,26 +144,6 @@ module test_3_size_nuts () {
   }
 }
 
-module test_internal_setting () {
-  translate([-3,0,0]) thread_polyhedron (w_extrusion, pitch, false, 1, pitch, false, false, false, 30, 20);
-  color([1,0,0]) translate([-6,0,0]) thread_polyhedron (w_extrusion, pitch, true, 1, pitch, false, false, false, 30, 20);
-  color([0,1,0]) translate([-9,0,0]) thread_polyhedron (w_extrusion, pitch, true, 1, pitch, false, false, false, 30, 40);
-  translate ([2,0,0]) difference () { 
-    thread_polyhedron (w_extrusion, pitch, false, 1, pitch, false, false, false, 30, 20);
-    thread_polyhedron (w_extrusion, pitch, true,  1, pitch, false, false, false, 30, 20);
-  }
-  translate ([5,0,0]) difference () { 
-    thread_polyhedron (w_extrusion, pitch, false, 1, pitch, false, false, false, 30, 20);
-    translate([1,0,0]) thread_polyhedron (w_extrusion, pitch, true,  1, pitch, false, false, false, 30, 20);
-  }
-}
-
-// for (i=[0:2]) { 
-//   translate ([0,0,i*8]) nut(tol = i);
-// }
-
-// nut(tol=test_tol);
-
 
 module case () {
   h_case = 28;
