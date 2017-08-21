@@ -12,6 +12,8 @@ d_pulley           = 22;
 d_pulley_bolt_hold = 5.5;
 w_pulley           = 11;
 w_extrusion        = 20;
+d_puller           = w_extrusion;
+d_puller_tol       = d_puller + 1;
 pitch              = 2;
 groove             = false;
 thread_size        = pitch * 1.0;
@@ -104,23 +106,17 @@ module puller(fast=false) {
     translate([0,0,-4])
     base_pillars(cutouts = true);
 
-    // for (i=[0:3]) {
-    //   rotate(i*90)
-    //   translate([5.9,5.9,-1])
-    //   cube([w_extrusion, w_extrusion, d_pulley+10 + 2]);
-    // }
-
   }
 
 }
 
-module base_pillars(cutouts=false) {
+module base_pillars(cutouts=false, height=d_pulley + 10 + 2) {
   tol = 0.5;
   lS  = cutouts ? 5.9 : 5.9 + tol;
   for (i=[0:3]) {
     rotate(i*90)
     translate([lS,lS,-1])
-    cube([w_extrusion, w_extrusion, d_pulley+10 + 2]);
+    cube([w_extrusion, w_extrusion, height]);
   }
 }
 
@@ -144,42 +140,49 @@ module test_3_size_nuts () {
   }
 }
 
-
 module case () {
-  h_case = 28;
+  h_case = 24;
   w_flanges = 4;
   d_case = w_extrusion + w_flanges * 2;
-  translate([0,0,h_case - 5])
+  w_channel = (5.9 + 0.5) * 2;
+  h_channel = h_case - w_flanges;
+
+  translate([0,0,- w_flanges])
   difference() {
-    cylinder(d=d_case, h=5);
-    translate([0,0,-0.1]) cylinder(d=w_extrusion + 1, h=10+0.2);
-  }
-
-  intersection() {
-    cylinder(d=d_case, h=h_case);
-    base_pillars();
-  }
-
-  translate([0,0,-w_flanges*2])
-    difference() {
-      hull() {
-        translate([0,0,w_flanges]) cylinder(d=d_case, h=w_flanges);
-        translate([0,0,w_flanges/2])
-        cube([d_case, d_case, w_flanges], center=true);
-      }
+    hull() {
+      translate([0,0,w_flanges])
+      cylinder(d=d_case, h=h_case + w_flanges);
       translate([0,0,w_flanges/2])
-      cube([w_extrusion + 0.5, w_extrusion + 0.5, w_flanges + 1], center=true);
-      for (i=[0:180:360]) {
-        rotate(i)
-        translate([5.9,-(w_pulley+1)/2,-1])
-          cube([20, w_pulley + 1, 20]);
-      }
+        cube([d_case, d_case, w_flanges], center=true);
     }
+
+    rotate(90)
+    translate([0,0, h_channel / 2 + w_flanges * 2])
+      cube([d_case + 2, w_channel, h_channel], center=true);
+
+    translate([0,0, (h_channel + w_flanges*2) / 2 - 1 ])
+      cube([d_case + 2, w_channel, h_channel + w_flanges*2 + 2], center=true);
+
+    translate([0,0,w_flanges/2])
+      cube([w_extrusion + 0.5, w_extrusion + 0.5, w_flanges + 1], center=true);
+
+    difference() {
+      translate([0,0,-1]) 
+      cylinder(d=d_puller_tol, h = h_case + w_flanges * 2 + 2);
+      translate([0,0,-1]) 
+      base_pillars(height = h_case + w_flanges * 2 + 4);
+    }
+
+  }
+
 }
 
 case();
-puller(false);
-translate([0,0,28.2]) nut();
+puller();
 
+// case();
+// puller(false);
+// translate([0,0,28.2]) nut();
+// 
 // nut();
 // translate([30,0,0]) test_thread();
