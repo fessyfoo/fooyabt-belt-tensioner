@@ -15,8 +15,6 @@ w_extrusion        = 20;
 d_puller           = 24;
 d_puller_tol       = d_puller + 1;
 pitch              = 2;
-groove             = false;
-thread_size        = pitch * 1.0;
 
 function hyp(a,b) = sqrt(pow(a,2) + pow(b,2));
 
@@ -33,8 +31,6 @@ module nut(tol=0.75) {
   difference() {
     cylinder(d=dO, h=hC);
     translate([0,0,-0.01]) metric_thread(
-      groove      = groove,
-      thread_size = thread_size,
       diameter    = dI,
       length      = hC+0.02,
       internal    = true,
@@ -57,8 +53,6 @@ module test_thread(h=10,pitch=pitch) {
   translate([-wC/2,-wC/2]) 
     cube([wC, wC, h*2]);
   metric_thread(
-    groove = groove,
-    thread_size = thread_size,
     diameter=d_puller,
     length=h+2,
     internal=false,
@@ -81,8 +75,6 @@ module puller(fast=false) {
       } else {
         cylinder(d=d_puller, h=h_base);
         translate([0,0,h_base]) metric_thread(
-          groove      = groove,
-          thread_size = thread_size,
           diameter    = d_puller,
           length      = h_threads,
           internal    = false,
