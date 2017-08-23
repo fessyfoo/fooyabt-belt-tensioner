@@ -177,10 +177,83 @@ module case () {
 
 }
 
+module case2 () {
+  w_flanges     = thickness;
+  h_case        = h_case;
+  d_case        = d_puller + w_flanges * 2;
+  w_case        = w_extrusion + w_flanges * 2;
+  w_channel     = (5.9 + puller_pillar_tol) * 2;
+  h_channel     = h_case - w_flanges * 3;
+  extrusion_tol = 0.5;
+
+  difference() {
+    union() {
+      hull() {
+        translate_z(h_case - w_flanges)
+          cylinder(d=d_case, h=w_flanges);
+        translate_z(w_flanges/2 + w_flanges)
+          cube([w_extrusion, w_case, w_flanges], center=true);
+      }
+
+      translate_z(w_flanges/2)
+        cube([w_extrusion, w_case, w_flanges], center=true);
+    }
+
+    // channel closed side
+    rotate(90)
+    translate([0,0, h_channel / 2 + w_flanges * 2])
+      cube([d_case + 2, w_channel, h_channel], center=true);
+
+    // base flanges
+    translate([0,0,(w_flanges+1)/2 - .98]) // not sure why i needed this.
+      cube([
+        w_extrusion + extrusion_tol,
+        w_extrusion + extrusion_tol,
+        w_flanges + 1
+      ],
+        center=true
+      );
+
+    // channel open side.
+    translate([0,0, (h_channel + w_flanges*2) / 2 - 1 ])
+      cube([d_case + 2, w_channel, h_channel + w_flanges*2 + 2], center=true);
+
+    translate([0,0,w_flanges + 0.01])
+    difference() {
+      cylinder(d=d_puller_tol, h = h_case + w_flanges * 2 + 2);
+      translate([0,0,-1])
+        base_pillars(height = h_case + w_flanges * 2 + 4);
+    }
+
+  }
+
+  translate([0,-10 - extrusion_tol,0])
+    vslot(height=w_flanges, length=6+extrusion_tol, tol=extrusion_tol);
+  translate([0,10 + extrusion_tol,0]) rotate(180)
+    vslot(height=w_flanges, length=6+extrusion_tol, tol=extrusion_tol);
+
+}
+
 module assembly () {
   case();
   translate_z(thickness) puller();
   translate_z(h_case + 0.4 ) nut();
+}
+
+module vslot(height=1, length = 6, tol=0.375) {
+
+  l = length;
+  t = tol;  // this technique could use some work.
+  // points = [[0,0], [0,6], [3,6], [6,3], [6,2], [3,2], [5,0]];
+  // points = [[0,0], [0,6], [3,6], [6,3], [6,2], [3,2], [3,0]];
+  points = [[0,0], [0,l-t], [3-t,l-t], [6-t,l-t-3], [6-t,l+t-4], [3-t,l+t-4], [3-t,0]];
+
+  linear_extrude(height)
+    union() {
+        mirror([1,0,0])
+          polygon(points);
+        polygon(points);
+    }
 }
 
 module flip(height) {
