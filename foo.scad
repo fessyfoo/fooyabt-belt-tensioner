@@ -48,7 +48,7 @@ module nut(tol=0.75) {
     );
   }
 
-  c = dO * PI; 
+  c = dO * PI;
   n = floor(c/w/2);
   for (i=[0:360/n:360]) {
     rotate(i)
@@ -59,7 +59,7 @@ module nut(tol=0.75) {
 
 module test_thread(h=10,pitch=pitch) {
   wC = d_puller / 2;
-  translate([-wC/2,-wC/2]) 
+  translate([-wC/2,-wC/2])
     cube([wC, wC, h*2]);
   metric_thread(
     diameter=d_puller,
@@ -98,7 +98,7 @@ module puller(fast=false) {
     dn = hyp(d_puller, d_puller);
     echo(dn=dn);
 
-    translate([-dn/2,-(w_pulley + 1)/2,-1]) 
+    translate([-dn/2,-(w_pulley + 1)/2,-1])
       cube([dn, w_pulley + 1, d_pulley + 2]);
 
     translate_z(d_pulley/2) {
@@ -167,9 +167,9 @@ module case () {
 
     translate([0,0,w_flanges])
     difference() {
-      translate([0,0,-1]) 
+      translate([0,0,-1])
       cylinder(d=d_puller_tol, h = h_case + w_flanges * 2 + 2);
-      translate([0,0,-1]) 
+      translate([0,0,-1])
       base_pillars(height = h_case + w_flanges * 2 + 4);
     }
 
@@ -257,10 +257,9 @@ module vslot(height=1, length = 6, tol=0.375) {
 }
 
 module flip(height) {
-   
-   translate_z(height/2) 
+   translate_z(height/2)
    rotate([180,0,0])
-   translate_z(-height/2) 
+   translate_z(-height/2)
    children();
 }
 
