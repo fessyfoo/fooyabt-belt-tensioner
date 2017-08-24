@@ -184,13 +184,54 @@ module base_pillars(
   }
 }
 
-module case () {
+module case() {
+  case2();
+}
+
+
+module case_cutouts(
+  h_channel,
+  w_channel,
+  d_case,
+  w_flanges,
+  extrusion_tol,
+) {
+  // channel closed side
+  rotate(90)
+    translate([0,0, h_channel / 2 + w_flanges * 2])
+      cube([d_case + 2, w_channel, h_channel], center=true);
+
+  // channel open side.
+  translate([0,0, (h_channel + w_flanges*2) / 2 - 1 ])
+    cube([d_case + 2, w_channel, h_channel + w_flanges*2 + 2], center=true);
+
+  // 20x20 cutout
+  translate([0,0,(w_flanges+1)/2 - .98]) // not sure why i needed this.
+    cube([
+      w_extrusion + extrusion_tol,
+      w_extrusion + extrusion_tol,
+      w_flanges + 1
+    ],
+      center=true
+    );
+
+  // puller path
+  translate([0,0,w_flanges*1.5 + 0.01])
+    difference() {
+      cylinder(d=d_puller_tol, h = h_case + w_flanges * 2 + 2);
+      translate([0,0,-1])
+        base_pillars(height = h_case + w_flanges * 2 + 4);
+    }
+}
+
+module case1 () {
   w_flanges = thickness;
   h_case = h_case;
   d_case = d_puller + w_flanges * 2;
   w_case = w_extrusion + w_flanges * 2;
   w_channel = (5.9 + puller_pillar_tol) * 2;
   h_channel = h_case - w_flanges * 3;
+  extrusion_tol = 0.375;
 
   difference() {
     hull() {
@@ -199,23 +240,13 @@ module case () {
         cube([w_case, w_case, w_flanges], center=true);
     }
 
-    rotate(90)
-    translate([0,0, h_channel / 2 + w_flanges * 2])
-      cube([d_case + 2, w_channel, h_channel], center=true);
-
-    translate([0,0, (h_channel + w_flanges*2) / 2 - 1 ])
-      cube([d_case + 2, w_channel, h_channel + w_flanges*2 + 2], center=true);
-
-    translate([0,0,w_flanges/2])
-      cube([w_extrusion + 0.5, w_extrusion + 0.5, w_flanges + 1], center=true);
-
-    translate([0,0,w_flanges])
-    difference() {
-      translate([0,0,-1])
-      cylinder(d=d_puller_tol, h = h_case + w_flanges * 2 + 2);
-      translate([0,0,-1])
-      base_pillars(height = h_case + w_flanges * 2 + 4);
-    }
+    case_cutouts(
+      h_channel     = h_channel,
+      w_channel     = w_channel,
+      w_flanges     = w_flanges,
+      d_case        = d_case,
+      extrusion_tol = extrusion_tol
+    );
 
   }
 
@@ -243,31 +274,15 @@ module case2 () {
         cube([w_extrusion, w_case, w_flanges], center=true);
     }
 
-    // channel closed side
-    rotate(90)
-    translate([0,0, h_channel / 2 + w_flanges * 2])
-      cube([d_case + 2, w_channel, h_channel], center=true);
+    case_cutouts(
+      h_channel     = h_channel,
+      w_channel     = w_channel,
+      w_flanges     = w_flanges,
+      d_case        = d_case,
+      extrusion_tol = extrusion_tol
+    );
 
-    // base flanges
-    translate([0,0,(w_flanges+1)/2 - .98]) // not sure why i needed this.
-      cube([
-        w_extrusion + extrusion_tol,
-        w_extrusion + extrusion_tol,
-        w_flanges + 1
-      ],
-        center=true
-      );
 
-    // channel open side.
-    translate([0,0, (h_channel + w_flanges*2) / 2 - 1 ])
-      cube([d_case + 2, w_channel, h_channel + w_flanges*2 + 2], center=true);
-
-    translate([0,0,w_flanges*1.5 + 0.01])
-    difference() {
-      cylinder(d=d_puller_tol, h = h_case + w_flanges * 2 + 2);
-      translate([0,0,-1])
-        base_pillars(height = h_case + w_flanges * 2 + 4);
-    }
 
   }
 
