@@ -235,8 +235,8 @@ module case2 () {
 }
 
 module assembly () {
-  case();
-  translate_z(thickness) puller();
+  case2();
+  translate_z(thickness *2) puller();
   translate_z(h_case + 0.4 ) nut();
 }
 
@@ -272,7 +272,7 @@ module plate() {
 
 module display() {
   rotate(45) assembly();
-  translate([45,0,0]) rotate(45) case();
+  translate([45,0,0]) rotate(45) case2();
   translate([90,0,0]) rotate(45) puller();
   translate([135,0,0]) nut();
 }
