@@ -29,7 +29,7 @@ pitch              = 2;
 
 h_case   = range + d_pulley + thickness * 2;
 h_nut    = thickness > 2*pitch ? ceil(thickness/pitch)*pitch : 2*pitch;
-h_puller = d_pulley + range + thickness + h_nut;
+h_puller = d_pulley + range + h_nut;
 
 function hyp(a,b) = sqrt(pow(a,2) + pow(b,2));
 
@@ -115,7 +115,7 @@ module test_thread(h=10,pitch=pitch) {
 
 module puller(fast=false) {
   h_total   =  h_puller;
-  h_threads = h_total - (d_pulley + d_pulley_axel_hole) * 2/3;
+  h_threads = h_total - (d_pulley + d_pulley_axel_hole) * 2/3 + thickness;
   h_base    = h_total - h_threads;
 
   difference() {
@@ -142,7 +142,7 @@ module puller(fast=false) {
     translate([-dn/2,-(w_pulley + 1)/2,-1])
       cube([dn, w_pulley + 1, d_pulley + 2]);
 
-    translate_z(d_pulley/2) {
+    translate_z(d_pulley/2 - thickness) {
 
       // axel holes
       rotate([90,0,0])
