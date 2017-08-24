@@ -41,37 +41,40 @@ module nut() {
   nut2();
 }
 
-module nut1(tol=0.75) {
-  echo("nut tolerance = ", tol);
-  w = thickness;
-  dI = d_puller + tol * 2;
-  dO = w*2 + dI;
 
+function h_nut(h_nut, pitch) = 
+  h_nut > 2*pitch ? ceil(h_nut/pitch)*pitch : 2*pitch;
+
+module nut1(tol=0.75, h_nut = h_nut, pitch = pitch) {
+  h  = h_nut(h_nut, pitch);
+  w  = thickness;
+  dI = d_puller;
+  dO = w*2 + dI;
+  c  = dO * PI;
+  n  = floor(c/w/2);
 
   difference() {
-    cylinder(d=dO, h=h_nut);
+    cylinder(d=dO, h=h);
     translate([0,0,-0.01]) metric_thread(
       diameter    = dI,
-      length      = h_nut+0.02,
+      length      = h+0.02,
       internal    = true,
       pitch       = pitch,
       leadin      = 0
     );
   }
 
-  c = dO * PI;
-  n = floor(c/w/2);
   for (i=[0:360/n:360]) {
     rotate(i)
     translate([dO/2,0,0])
-    cylinder(d=w, h=h_nut * 0.75);
+    cylinder(d=w, h=h * 0.75);
   }
 }
 
 module nut2(tol=0.75) {
-  h   = h_nut;
+  h   = h_nut(h_nut, pitch);
   w   = thickness;
-  dI  = d_puller + tol * 2;
+  dI  = d_puller;
   dOb = w*2    + dI;
   dOt = w*1.5 + dI;
 
