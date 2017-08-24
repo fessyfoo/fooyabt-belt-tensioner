@@ -295,7 +295,7 @@ module case2 () {
 
 module assembly () {
   case2();
-  translate_z(thickness *2) puller();
+  translate_z(thickness + pitch * 2.1) puller();
   translate_z(h_case + 0.4 ) nut();
 }
 
