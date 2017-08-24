@@ -3,6 +3,13 @@ use <threads.scad>;
 $fs=0.1;
 $fa=3;
 
+
+// TODO
+// -  support for bridging on case.
+// - flange on pully for lateral support.
+// - flange for attaching t-nuts
+// - 2040 case.
+
 // 4.6 pully puller wall
 // 10.8 pully gap
 // 4.3 pully puller nub
