@@ -184,7 +184,7 @@ module case2 () {
   w_case        = w_extrusion + w_flanges * 2;
   w_channel     = (5.9 + puller_pillar_tol) * 2;
   h_channel     = h_case - w_flanges * 3;
-  extrusion_tol = 0.5;
+  extrusion_tol = 0.375;
 
   difference() {
     union() {
@@ -218,7 +218,7 @@ module case2 () {
     translate([0,0, (h_channel + w_flanges*2) / 2 - 1 ])
       cube([d_case + 2, w_channel, h_channel + w_flanges*2 + 2], center=true);
 
-    translate([0,0,w_flanges + 0.01])
+    translate([0,0,w_flanges*1.5 + 0.01])
     difference() {
       cylinder(d=d_puller_tol, h = h_case + w_flanges * 2 + 2);
       translate([0,0,-1])
@@ -228,9 +228,9 @@ module case2 () {
   }
 
   translate([0,-10 - extrusion_tol,0])
-    vslot(height=w_flanges, length=6+extrusion_tol, tol=extrusion_tol);
+    vslot_supported(height=w_flanges, length=6+extrusion_tol, tol=extrusion_tol);
   translate([0,10 + extrusion_tol,0]) rotate(180)
-    vslot(height=w_flanges, length=6+extrusion_tol, tol=extrusion_tol);
+    vslot_supported(height=w_flanges, length=6+extrusion_tol, tol=extrusion_tol);
 
 }
 
@@ -284,6 +284,44 @@ module test_hex_nut_hole() {
       translate([0,-(w_pulley+1)/2,0])
       puller();
     }
+}
+
+module vslot_supported(height=thickness, length=6, tol=0.375) {
+  w_support = 12;
+  union() {
+    difference() {
+      hull() {
+        vslot(height=height, length=length, tol=tol);
+        rotate(180)
+        difference() {
+          resize([w_support,length*2*0.65,height*1.5])
+          cylinder();
+          translate([-w_support/2,0,-1])
+            cube([w_support,w_support,height*2 + 2]);
+        }
+      }
+      translate_z(-(height+1)/2 + height)
+        cube([20,20,height+1], center=true);
+    }
+    vslot(height=height, length=length, tol=tol);
+  }
+}
+
+module test_bottom_case2() {
+  flip () {
+    difference() {
+      translate_z(thickness/2 + thickness)
+      cube([w_extrusion, w_extrusion +2*thickness, thickness], center=true);
+
+      translate_z((thickness +2)/2 + thickness - 1 )
+      cube([w_extrusion - thickness*2, w_extrusion, thickness + 2], center=true);
+    }
+    intersection() {
+      case2();
+      cube([40,40,thickness*2*2],center=true);
+    }
+
+  }
 }
 
 display();
