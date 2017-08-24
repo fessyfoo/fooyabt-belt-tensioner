@@ -383,4 +383,16 @@ module test_bottom_case2() {
   }
 }
 
+module test_2case() {
+  translate([0,-20,0]) case1();
+  translate([0,20,0])  case2();
+}
+
+module test_nuts() {
+  translate([20,-20,0]) nut1(h_nut=thickness*2);
+  translate([20,20,0])  nut2(h_nut=thickness*2);
+  translate([-20,-20,0]) nut1();
+  translate([-20,20,0])  nut2();
+}
+
 display();
