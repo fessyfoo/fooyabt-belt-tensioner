@@ -30,7 +30,11 @@ module translate_z (h) {
   translate([0,0,h]) children();
 }
 
-module nut(tol=0.75) {
+module nut() {
+  nut2();
+}
+
+module nut1(tol=0.75) {
   echo("nut tolerance = ", tol);
   w = thickness;
   dI = d_puller + tol * 2;
@@ -55,6 +59,36 @@ module nut(tol=0.75) {
     translate([dO/2,0,0])
     cylinder(d=w, h=h_nut * 0.75);
   }
+}
+
+module nut2(tol=0.75) {
+  h   = h_nut;
+  w   = thickness;
+  dI  = d_puller + tol * 2;
+  dOb = w*2    + dI;
+  dOt = w*1.5 + dI;
+
+  c   = dOb * PI;
+  d_nub = w * .75;
+  n   = floor(c/d_nub/2);
+
+  difference() {
+    cylinder(d1=dOb, d2=dOt, h=h);
+    translate([0,0,-0.01]) metric_thread(
+      diameter    = dI,
+      length      = h+0.02,
+      internal    = true,
+      pitch       = pitch,
+      leadin      = 0
+    );
+
+    for (i=[0:360/n:360]) {
+      rotate(i)
+      translate([dOb/2,0,-0.1])
+      cylinder(d=d_nub, h=h+0.2);
+    }
+  }
+
 }
 
 module test_thread(h=10,pitch=pitch) {
