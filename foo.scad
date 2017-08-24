@@ -119,7 +119,7 @@ module puller(fast=false) {
     }
 
     // square notches
-    translate_z(-thickness)
+    translate_z(-pitch * 1.5)
       base_pillars(height=h_total, cutouts = true);
 
   }
