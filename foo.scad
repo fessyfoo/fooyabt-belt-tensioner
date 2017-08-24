@@ -48,8 +48,8 @@ function h_nut(h_nut, pitch) =
 module nut1(tol=0.75, h_nut = h_nut, pitch = pitch) {
   h  = h_nut(h_nut, pitch);
   w  = thickness;
-  dI = d_puller;
-  dO = w*2 + dI;
+  dI = d_puller + tol*2;
+  dO = w*2 + d_puller;
   c  = dO * PI;
   n  = floor(c/w/2);
 
@@ -74,9 +74,9 @@ module nut1(tol=0.75, h_nut = h_nut, pitch = pitch) {
 module nut2(tol=0.75) {
   h   = h_nut(h_nut, pitch);
   w   = thickness;
-  dI  = d_puller;
-  dOb = w*2    + dI;
-  dOt = w*1.5 + dI;
+  dI  = d_puller + tol * 2;
+  dOb = w*2   + d_puller;
+  dOt = w*1.5 + d_puller;
 
   c   = dOb * PI;
   d_nub = w * .75;
