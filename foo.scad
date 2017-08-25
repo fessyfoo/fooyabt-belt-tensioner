@@ -18,7 +18,7 @@ $fa=3;
 
 range              = 17; // range of movement in mm
 d_pulley           = 22;
-w_pulley           = 11;
+w_pulley           = 12;
 d_pulley_axel_hole = 5.5; // m5 + tolerance
 d_pulley_nut_hole  = 10; // hex hole to make clearence for pulley bolt
 w_extrusion        = 20;
@@ -145,8 +145,8 @@ module puller(fast=false) {
 
     dn = d_puller + 0.2;
     // space for pulley
-    translate([-dn/2,-(w_pulley + 1)/2,-1])
-      cube([dn, w_pulley + 1, d_pulley + 2]);
+    translate([-dn/2,-w_pulley/2,-1])
+      cube([dn, w_pulley, d_pulley + 2]);
 
     translate_z(d_pulley/2 - thickness) {
 
@@ -364,11 +364,13 @@ module display() {
 }
 
 module test_hex_nut_hole() {
+  slice = d_pulley - thickness*2;
   rotate([90,0,0])
+  translate([0,0,-slice/2])
     intersection() {
-      translate([-10,0,0]) cube(20);
-      translate([0,-(w_pulley+1)/2,0])
-      puller();
+      translate([-d_pulley/2,-0.1,0])
+        cube([d_pulley, d_pulley, slice]);
+      translate([0,-w_pulley/2,0]) puller(fast=true);
     }
 }
 
