@@ -5,8 +5,6 @@ $fa=3;
 
 
 // TODO
-// -  support for bridging on case.
-// - flange on pully for lateral support.
 // - flange for attaching t-nuts
 // - 2040 case.
 // - unify alternate case style dimension variables.
