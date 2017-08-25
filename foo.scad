@@ -329,10 +329,10 @@ module case2 () {
 
 }
 
-module assembly (fast=false) {
+module assembly (fast=false, nut=true) {
   case2();
   translate_z(h_puller_trim + h_puller_top + 0.2) puller(fast=fast);
-  translate_z(h_case + 0.4 ) nut();
+  if (nut) { translate_z(h_case + 0.4 ) nut(); }
 }
 
 module vslot(height=1, length = 6, tol=0.375) {
