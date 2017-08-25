@@ -27,14 +27,26 @@ h_t_nut_flange     = 10;
 thickness          = 4;
 pitch              = 2;
 
-r_embed  = d_pulley / 2 - d_pulley_nut_hole / 2 + 1;
+h_puller_trim = thickness / 2;
+h_puller_top  = pitch * 2;
+
 r_embed  = d_pulley / 2 - d_pulley_nut_hole / 2 - 1;
+h_range  = range - r_embed > 0 ? range - r_embed : r_embed;
 h_nut    = 2*thickness;
-h_puller = d_pulley + range - r_embed + thickness;
-h_case   = d_pulley + range - r_embed + thickness * 2;
+h_case   = d_pulley + h_range + thickness*2;
+h_puller = d_pulley + h_range + thickness + h_puller_top - h_puller_trim;
 d_case   = d_puller + thickness * 2;
 
-echo(h_case=h_case,h_puller=h_puller,h_nut=h_nut, range=range, r_embed=r_embed);
+
+echo(
+  h_case        = h_case,
+  h_puller      = h_puller,
+  h_nut         = h_nut,
+  range         = range,
+  r_embed       = r_embed,
+  h_puller_trim = h_puller_trim,
+  h_puller_top  = h_puller_top
+);
 
 
 module translate_z (h) {
@@ -121,7 +133,7 @@ module test_thread(h=10,pitch=pitch) {
 
 
 module puller(fast=false) {
-  h_threads = h_puller - (d_pulley + d_pulley_axel_hole) * 2/3 + thickness;
+  h_threads = h_range + thickness + h_puller_top;
   h_base    = h_puller - h_threads;
 
   difference() {
@@ -145,10 +157,10 @@ module puller(fast=false) {
 
     dn = d_puller + 0.2;
     // space for pulley
-    translate([-dn/2,-w_pulley/2,-1])
-      cube([dn, w_pulley, d_pulley + 2]);
+    translate([-dn/2,-w_pulley/2 -0.01 ,-1])
+      cube([dn, w_pulley + 0.02, d_pulley + 2]);
 
-    translate_z(d_pulley/2 - thickness) {
+    translate_z(d_pulley/2 - h_puller_trim) {
 
       // axel holes
       rotate([90,0,0])
@@ -165,7 +177,7 @@ module puller(fast=false) {
     }
 
     // square notches
-    translate_z(-pitch * 1.5)
+    translate_z(-h_puller_top)
       base_pillars(cutouts = true);
 
     arch_cutout();
@@ -318,8 +330,8 @@ module case2 () {
 
 module assembly (fast=false) {
   case2();
-  translate_z(thickness + pitch * 2.1) puller(fast=fast);
-  *translate_z(h_case + 0.4 ) nut();
+  translate_z(h_puller_trim + h_puller_top + 0.2) puller(fast=fast);
+  translate_z(h_case + 0.4 ) nut();
 }
 
 module vslot(height=1, length = 6, tol=0.375) {
