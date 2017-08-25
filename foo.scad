@@ -16,10 +16,11 @@ $fa=3;
 // 4.3 pully puller nub
 // 5.5 hole for pully bolt
 
-range              = 10; // range of movement.
+range              = 17; // range of movement in mm
 d_pulley           = 22;
 w_pulley           = 11;
 d_pulley_axel_hole = 5.5; // m5 + tolerance
+d_pulley_nut_hole  = 10; // hex hole to make clearence for pulley bolt
 w_extrusion        = 20;
 d_puller           = 24;
 d_puller_tol       = d_puller + 1;
@@ -28,9 +29,12 @@ h_t_nut_flange     = 10;
 thickness          = 4;
 pitch              = 2;
 
-h_case   = range + d_pulley + thickness * 2;
+r_embed  = d_pulley / 2 - d_pulley_nut_hole / 2 + 1;
 h_nut    = 2*thickness;
-h_puller = d_pulley + range + h_nut;
+h_puller = d_pulley + range - r_embed + thickness;
+h_case   = d_pulley + range - r_embed + thickness * 2;
+
+echo(h_case=h_case,h_puller=h_puller,h_nut=h_nut, range=range, r_embed=r_embed);
 
 function hyp(a,b) = sqrt(pow(a,2) + pow(b,2));
 
@@ -155,7 +159,6 @@ module puller(fast=false) {
           cylinder(d=d_pulley_axel_hole, h=d_puller + 2);
 
       // hex cutouts, keep stock size bolt fitting.
-      d_pulley_nut_hole = 10;
       difference() {
         rotate([90,90,0])
           translate_z(-(d_puller + 2)/2)
