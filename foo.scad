@@ -228,7 +228,7 @@ module case_cutouts(
     cube([d_case + 2, w_pulley, h_case], center=true);
 
   // 20x20 cutout
-  translate([0,0,(w_flanges+1)/2 - .98]) // not sure why i needed this.
+  translate([0,0,(w_flanges+1)/2 - .98]) // not sure why i needed this .98
     cube([
       w_extrusion + extrusion_tol,
       w_extrusion + extrusion_tol,
