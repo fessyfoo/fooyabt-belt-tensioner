@@ -29,7 +29,7 @@ thickness          = 4;
 pitch              = 2;
 
 h_case   = range + d_pulley + thickness * 2;
-h_nut    = thickness > 2*pitch ? ceil(thickness/pitch)*pitch : 2*pitch;
+h_nut    = 2*thickness;
 h_puller = d_pulley + range + h_nut;
 
 function hyp(a,b) = sqrt(pow(a,2) + pow(b,2));
