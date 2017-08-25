@@ -212,20 +212,20 @@ module case() {
 
 
 module case_cutouts(
-  h_channel,
   d_case,
   w_flanges,
   extrusion_tol,
 ) {
+  h_channel = h_case - thickness * 3 + thickness/2 ;
 
   // channel closed side
   rotate(90)
-    translate([0,0, h_channel / 2 + w_flanges * 2])
+    translate_z( h_case - h_channel/2 - thickness)
       cube([d_case + 2, w_pulley, h_channel], center=true);
 
   // channel open side.
-  translate([0,0, (h_channel + w_flanges*2) / 2 - 1 ])
-    cube([d_case + 2, w_pulley, h_channel + w_flanges*2 + 2], center=true);
+  translate_z(h_case/2 - thickness)
+    cube([d_case + 2, w_pulley, h_case], center=true);
 
   // 20x20 cutout
   translate([0,0,(w_flanges+1)/2 - .98]) // not sure why i needed this.
@@ -251,7 +251,6 @@ module case1 () {
   h_case = h_case;
   d_case = d_puller + w_flanges * 2;
   w_case = w_extrusion + w_flanges * 2;
-  h_channel = h_case - w_flanges * 3;
   extrusion_tol = 0.375;
 
   difference() {
@@ -262,7 +261,6 @@ module case1 () {
     }
 
     case_cutouts(
-      h_channel     = h_channel,
       w_flanges     = w_flanges,
       d_case        = d_case,
       extrusion_tol = extrusion_tol
@@ -277,7 +275,6 @@ module case2 () {
   h_case        = h_case;
   d_case        = d_puller + w_flanges * 2;
   w_case        = w_extrusion + w_flanges * 2;
-  h_channel     = h_case - w_flanges * 3;
   extrusion_tol = 0.375;
 
   difference() {
@@ -294,7 +291,6 @@ module case2 () {
     }
 
     case_cutouts(
-      h_channel     = h_channel,
       w_flanges     = w_flanges,
       d_case        = d_case,
       extrusion_tol = extrusion_tol
