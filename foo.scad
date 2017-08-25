@@ -178,22 +178,26 @@ module rotate_dup(a) {
   children();
 }
 
+module mirror_pillars() {
+  mirror([1,0,0]) children();
+  mirror([0,1,0]) children();
+  rotate(180)     children();
+  mirror([0,0,0]) children();
+}
+
 module base_pillars(
   cutouts = false,
   height  = h_puller,
   tol     = puller_pillar_tol
 ) {
   t   = cutouts ? 0 : tol;
-  lS  = 5.9 + t;
+  lS  = w_pulley / 2 + t;
+  lT  = w_pulley / 2 - 0.01;
 
   difference() {
-    union() {
-      for (i=[0:3]) {
-        rotate(i*90)
-        translate([lS,lS,-1])
+    mirror_pillars()
+      translate([lS,lT,-1])
         cube([d_puller, d_puller, height]);
-      }
-    }
 
     rotate_dup(180) {
       translate([-lS-thickness/2,lS + thickness/2 -2*t ,-1.1])
