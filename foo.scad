@@ -195,15 +195,14 @@ module base_pillars(
 ) {
   t   = cutouts ? 0 : tol;
   lS  = w_pulley / 2 + t;
-  lT  = w_pulley / 2 - 0.01;
 
   difference() {
     mirror_pillars()
-      translate([lS,lT,-1])
+      translate([lS,lS - tol,-1])
         cube([d_puller, d_puller, height]);
 
     rotate_dup(180) {
-      translate([-lS-thickness/2,lS + thickness/2 -2*t ,-1.1])
+      translate([-lS-thickness/2,lS + thickness/2 -2*t, -1.1])
         cube([(lS+thickness/2)*2, d_puller, height + .2]);
     }
   }
