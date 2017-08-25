@@ -311,9 +311,9 @@ module case2 () {
 
 }
 
-module assembly () {
+module assembly (fast=false) {
   case2();
-  translate_z(thickness + pitch * 2.1) puller();
+  translate_z(thickness + pitch * 2.1) puller(fast=fast);
   translate_z(h_case + 0.4 ) nut();
 }
 
@@ -354,11 +354,11 @@ module print_puller() {
   flip(h_puller) puller();
 }
 
-module display() {
+module display(fast=false) {
     translate([-67.5,0,0]) {
-    rotate(45) assembly();
+    rotate(45) assembly(fast=fast);
     translate([45,0,0]) rotate(45) case2();
-    translate([90,0,0]) rotate(45) puller();
+    translate([90,0,0]) rotate(45) puller(fast=fast);
     translate([135,0,0]) nut();
   }
 }
