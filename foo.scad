@@ -118,14 +118,13 @@ module test_thread(h=10,pitch=pitch) {
 
 
 module puller(fast=false) {
-  h_total   =  h_puller;
-  h_threads = h_total - (d_pulley + d_pulley_axel_hole) * 2/3 + thickness;
-  h_base    = h_total - h_threads;
+  h_threads = h_puller - (d_pulley + d_pulley_axel_hole) * 2/3 + thickness;
+  h_base    = h_puller - h_threads;
 
   difference() {
     union () {
       if (fast) {
-        cylinder(d=d_puller, h=h_total);
+        cylinder(d=d_puller, h=h_puller);
       } else {
         cylinder(d=d_puller, h=h_base);
         translate([0,0,h_base]) metric_thread(
@@ -165,7 +164,7 @@ module puller(fast=false) {
 
     // square notches
     translate_z(-pitch * 1.5)
-      base_pillars(height=h_total, cutouts = true);
+      base_pillars(cutouts = true);
 
   }
 
