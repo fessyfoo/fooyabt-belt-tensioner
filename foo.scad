@@ -36,7 +36,6 @@ h_case   = d_pulley + range - r_embed + thickness * 2;
 
 echo(h_case=h_case,h_puller=h_puller,h_nut=h_nut, range=range, r_embed=r_embed);
 
-function hyp(a,b) = sqrt(pow(a,2) + pow(b,2));
 
 module translate_z (h) {
   translate([0,0,h]) children();
@@ -144,8 +143,8 @@ module puller(fast=false) {
       }
     }
 
-    dn = hyp(d_puller, d_puller);
-
+    dn = d_puller + 0.2;
+    // space for pulley
     translate([-dn/2,-(w_pulley + 1)/2,-1])
       cube([dn, w_pulley + 1, d_pulley + 2]);
 
