@@ -16,7 +16,7 @@ $fa=3;
 // 4.3 pully puller nub
 // 5.5 hole for pully bolt
 
-range              = 17; // range of movement in mm
+range              = 15; // range of movement in mm
 d_pulley           = 22;
 w_pulley           = 12;
 d_pulley_axel_hole = 5.5; // m5 + tolerance
@@ -30,6 +30,7 @@ thickness          = 4;
 pitch              = 2;
 
 r_embed  = d_pulley / 2 - d_pulley_nut_hole / 2 + 1;
+r_embed  = d_pulley / 2 - d_pulley_nut_hole / 2 - 1;
 h_nut    = 2*thickness;
 h_puller = d_pulley + range - r_embed + thickness;
 h_case   = d_pulley + range - r_embed + thickness * 2;
