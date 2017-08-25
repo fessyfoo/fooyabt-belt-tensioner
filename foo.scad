@@ -209,11 +209,11 @@ module base_pillars(
 
   difference() {
     mirror_pillars()
-      translate([lS,lS - tol,-1])
+      translate([lS,lS - tol,0])
         cube([d_puller, d_puller, height]);
 
     rotate_dup(180) {
-      translate([-lS-thickness/2,lS + thickness/2 -2*t, -1.1])
+      translate([-lS-thickness/2,lS + thickness/2 -2*t, -.1])
         cube([(lS+thickness/2)*2, d_puller, height + .2]);
     }
   }
