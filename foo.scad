@@ -144,9 +144,7 @@ module puller(fast=false) {
       }
     }
 
-    //dn = sqrt(pow(d_puller,2)*2);
     dn = hyp(d_puller, d_puller);
-    echo(dn=dn);
 
     translate([-dn/2,-(w_pulley + 1)/2,-1])
       cube([dn, w_pulley + 1, d_pulley + 2]);
