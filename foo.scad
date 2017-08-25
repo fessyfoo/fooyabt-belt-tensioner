@@ -355,10 +355,12 @@ module print_puller() {
 }
 
 module display() {
-  rotate(45) assembly();
-  translate([45,0,0]) rotate(45) case2();
-  translate([90,0,0]) rotate(45) puller();
-  translate([135,0,0]) nut();
+    translate([-67.5,0,0]) {
+    rotate(45) assembly();
+    translate([45,0,0]) rotate(45) case2();
+    translate([90,0,0]) rotate(45) puller();
+    translate([135,0,0]) nut();
+  }
 }
 
 module test_hex_nut_hole() {
