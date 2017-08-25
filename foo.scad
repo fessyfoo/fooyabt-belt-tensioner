@@ -172,16 +172,32 @@ module puller(fast=false) {
 
 }
 
+module rotate_dup(a) {
+  rotate(180) children();
+  children();
+}
+
 module base_pillars(
   cutouts = false,
-  height  = d_pulley + 10 + 2,
+  height  = h_puller,
   tol     = puller_pillar_tol
 ) {
-  lS  = cutouts ? 5.9 : 5.9 + tol;
-  for (i=[0:3]) {
-    rotate(i*90)
-    translate([lS,lS,-1])
-    cube([d_puller, d_puller, height]);
+  t   = cutouts ? 0 : tol;
+  lS  = 5.9 + t;
+
+  difference() {
+    union() {
+      for (i=[0:3]) {
+        rotate(i*90)
+        translate([lS,lS,-1])
+        cube([d_puller, d_puller, height]);
+      }
+    }
+
+    rotate_dup(180) {
+      translate([-lS-thickness/2,lS + thickness/2 -2*t ,-1.1])
+        cube([(lS+thickness/2)*2, d_puller, height + .2]);
+    }
   }
 }
 
@@ -382,6 +398,11 @@ module test_bottom_case2() {
     }
 
   }
+}
+
+module test_base_pillars() {
+  #base_pillars(cutouts=true);
+  base_pillars(cutouts=false);
 }
 
 module test_2case() {
