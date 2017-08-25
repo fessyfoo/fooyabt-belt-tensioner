@@ -123,18 +123,20 @@ module puller(fast=false) {
 
   difference() {
     union () {
-      if (fast) {
-        cylinder(d=d_puller, h=h_puller);
-      } else {
-        cylinder(d=d_puller, h=h_base);
-        translate([0,0,h_base]) metric_thread(
-          diameter    = d_puller,
-          length      = h_threads,
-          internal    = false,
-          pitch       = pitch,
-          leadin      = 1,
-          leadinfac   = 2
-        );
+      cylinder(d=d_puller, h=h_base);
+      translate([0,0,h_base]) {
+        if (fast) {
+          color([0.5,0,0]) cylinder(d=d_puller, h=h_threads);
+        } else {
+          metric_thread(
+            diameter    = d_puller,
+            length      = h_threads,
+            internal    = false,
+            pitch       = pitch,
+            leadin      = 1,
+            leadinfac   = 2
+          );
+        }
       }
     }
 
