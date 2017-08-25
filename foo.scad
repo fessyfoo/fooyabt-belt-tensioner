@@ -33,6 +33,7 @@ r_embed  = d_pulley / 2 - d_pulley_nut_hole / 2 + 1;
 h_nut    = 2*thickness;
 h_puller = d_pulley + range - r_embed + thickness;
 h_case   = d_pulley + range - r_embed + thickness * 2;
+d_case   = d_puller + thickness * 2;
 
 echo(h_case=h_case,h_puller=h_puller,h_nut=h_nut, range=range, r_embed=r_embed);
 
@@ -168,6 +169,8 @@ module puller(fast=false) {
     translate_z(-pitch * 1.5)
       base_pillars(cutouts = true);
 
+    arch_cutout();
+
   }
 
 
@@ -211,17 +214,28 @@ module case() {
 }
 
 
+module arch_cutout() {
+  w = w_pulley + thickness + puller_pillar_tol * 2;
+  translate_z(-0.01)
+  resize([w, d_case + 2, w/2 ])
+  arch();
+}
+
 module case_cutouts(
-  d_case,
-  w_flanges,
-  extrusion_tol,
+  w_flanges = thickness,
+  extrusion_tol = 0.375,
 ) {
   h_channel = h_case - thickness * 3 + thickness/2 ;
 
   // channel closed side
-  rotate(90)
     translate_z( h_case - h_channel/2 - thickness)
-      cube([d_case + 2, w_pulley, h_channel], center=true);
+    difference() {
+      cube([w_pulley, d_case + 2, h_channel], center=true);
+      translate_z(-h_channel/2) 
+        resize([w_pulley , d_case + 2, w_pulley/2]) 
+          arch();
+    }
+
 
   // channel open side.
   translate_z(h_case/2 - thickness)
@@ -243,13 +257,13 @@ module case_cutouts(
       cylinder(d=d_puller_tol, h = h_case + w_flanges * 2 + 2);
       translate([0,0,-1])
         base_pillars(height = h_case + w_flanges * 2 + 4);
+        arch_cutout();
     }
 }
 
 module case1 () {
   w_flanges = thickness;
   h_case = h_case;
-  d_case = d_puller + w_flanges * 2;
   w_case = w_extrusion + w_flanges * 2;
   extrusion_tol = 0.375;
 
@@ -262,7 +276,6 @@ module case1 () {
 
     case_cutouts(
       w_flanges     = w_flanges,
-      d_case        = d_case,
       extrusion_tol = extrusion_tol
     );
 
@@ -273,7 +286,6 @@ module case1 () {
 module case2 () {
   w_flanges     = thickness;
   h_case        = h_case;
-  d_case        = d_puller + w_flanges * 2;
   w_case        = w_extrusion + w_flanges * 2;
   extrusion_tol = 0.375;
 
@@ -292,7 +304,6 @@ module case2 () {
 
     case_cutouts(
       w_flanges     = w_flanges,
-      d_case        = d_case,
       extrusion_tol = extrusion_tol
     );
 
@@ -310,7 +321,7 @@ module case2 () {
 module assembly (fast=false) {
   case2();
   translate_z(thickness + pitch * 2.1) puller(fast=fast);
-  translate_z(h_case + 0.4 ) nut();
+  *translate_z(h_case + 0.4 ) nut();
 }
 
 module vslot(height=1, length = 6, tol=0.375) {
@@ -423,6 +434,24 @@ module test_nuts() {
   translate([20,20,0])  nut2(h_nut=thickness*2);
   translate([-20,-20,0]) nut1();
   translate([-20,20,0])  nut2();
+}
+
+module arch() {
+  rotate([0,90,90])
+    translate([-1,0,0])
+    difference() {
+      translate([0.5,0,0])
+        cube([1,2,1], center=true);
+      translate([-0.01,0,0])
+        cylinder(h=2, center=true);
+    }
+}
+
+module test_case_bottom_inside() {
+  difference() {
+    test_2case();
+    translate_z(60) cube(80, center=true);
+  }
 }
 
 display();
