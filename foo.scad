@@ -9,6 +9,7 @@ $fa=3;
 // - flange on pully for lateral support.
 // - flange for attaching t-nuts
 // - 2040 case.
+// - unify alternate case style dimension variables.
 
 // 4.6 pully puller wall
 // 10.8 pully gap
