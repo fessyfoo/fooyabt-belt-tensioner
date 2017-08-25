@@ -341,8 +341,15 @@ module flip(height) {
 module plate() {
   offset = d_puller + thickness * 2;
   rotate(0)   translate([offset,0,0]) nut();
-  rotate(120) translate([offset,0,0]) flip(h_case) case();
-  rotate(240) translate([offset,0,0]) flip(h_puller) puller();
+  rotate(120) translate([offset,0,0]) print_case();
+  rotate(240) translate([offset,0,0]) print_puller();
+}
+
+module print_case() {
+  flip(h_case) case();
+}
+module print_puller() {
+  flip(h_puller) puller();
 }
 
 module display() {
