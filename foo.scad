@@ -62,7 +62,7 @@ echo(
   h_puller_top  = h_puller_top
 );
 
-function d_puller_min() = 
+function d_puller_min() =
   d_for_pulley_clearance(w_pulley, d_pulley, d_pulley_nut_hole);
 
 function d_for_pulley_clearance(w_pulley, d_pulley, d_pulley_nut_hole) =
