@@ -7,27 +7,24 @@ $fa=1;
 // - flange for attaching t-nuts
 // - 2040 case.
 
-range              = 15;    // range of movement in mm
+// all measurements in mm
+range              = 15;    // range of movement
 d_pulley           = 22;    // diameter of pulley (including clearance)
 w_pulley           = 12;    // width of pulley (including clearance)
+pitch              = 2;     // distance between threads
+puller_tol         = 0.5;   // tolerance around outside of puller
+puller_pillar_tol  = 0.375; // tolerance around slots of puller
+thread_tol         = 0.75;  // tolerance for threads.  (nut radius gets bigger)
+extrusion_tol      = 0.375; // tolerance for attachment to extrusion.
 d_pulley_axel_hole = 5.5;   // diameter of axel hole, including tolerance
 d_pulley_nut_hole  = 10;    // hex hole to make clearence for pulley bolt
 w_extrusion        = 20;    // width of extrusion
-extrusion_tol      = 0.375; // tolerance for attachment to extrusion.
-puller_tol         = 0.5;   // tolerance around outside of puller
-puller_pillar_tol  = 0.375; // tolerance around slots of puller
 thickness          = 4;     // height of ring, width of flanges, ...
-pitch              = 2;     // distance between threads
-h_nut              = 2*thickness; // later normalized to multiple of pitch
-h_puller_top       = pitch * 2; // amount of threads beyond the top of case
+h_nut              = 2*thickness;    // later normalized to multiple of pitch
+h_puller_top       = pitch * 2;      // amount of threads beyond the top of case
+d_puller           = d_puller_min(); // diameter of the puller
 
-
-d_puller_min = d_for_pulley_clearance(w_pulley, d_pulley, d_pulley_nut_hole);
-// diameter of the puller.  if this is big enough the pulley can be pulled
-// partly through the top and nut to make use of the range
-d_puller = d_puller_min;
-
-r_embed       = d_puller_min <= d_puller ?
+r_embed       = d_puller_min() <= d_puller ?
   d_pulley / 2 - d_pulley_nut_hole / 2 - 1 :
   0;
 
@@ -43,7 +40,7 @@ echo(
   h_case        = h_case,
   h_puller      = h_puller,
   d_puller      = d_puller,
-  d_puller_min  = d_puller_min,
+  d_puller_min  = d_puller_min(),
   h_nut         = h_nut,
   range         = range,
   h_erange      = h_erange,
@@ -51,6 +48,9 @@ echo(
   h_puller_trim = h_puller_trim,
   h_puller_top  = h_puller_top
 );
+
+function d_puller_min() = 
+  d_for_pulley_clearance(w_pulley, d_pulley, d_pulley_nut_hole);
 
 function d_for_pulley_clearance(w_pulley, d_pulley, d_pulley_nut_hole) =
   let(
@@ -76,7 +76,7 @@ module nut() {
 function h_nut(h_nut, pitch) =
   h_nut > 2*pitch ? ceil(h_nut/pitch)*pitch : 2*pitch;
 
-module nut1(tol=0.75, h_nut = h_nut, pitch = pitch) {
+module nut1(tol=thread_tol, h_nut = h_nut, pitch = pitch) {
   h  = h_nut(h_nut, pitch);
   w  = thickness;
   dI = d_puller + tol*2;
@@ -102,7 +102,7 @@ module nut1(tol=0.75, h_nut = h_nut, pitch = pitch) {
   }
 }
 
-module nut2(tol=0.75) {
+module nut2(tol=thread_tol) {
   h   = h_nut(h_nut, pitch);
   w   = thickness;
   dI  = d_puller + tol * 2;
