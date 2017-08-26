@@ -1,4 +1,4 @@
-use <threads.scad>;
+use <threads.scad>; // http://dkprojects.net/openscad-threads/
 
 $fs=0.1;
 $fa=1;
