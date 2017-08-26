@@ -73,7 +73,7 @@ module nut() {
 }
 
 
-function h_nut(h_nut, pitch) = 
+function h_nut(h_nut, pitch) =
   h_nut > 2*pitch ? ceil(h_nut/pitch)*pitch : 2*pitch;
 
 module nut1(tol=0.75, h_nut = h_nut, pitch = pitch) {
@@ -255,8 +255,8 @@ module case_cutouts(
     translate_z( h_case - h_channel/2 - thickness)
     difference() {
       cube([w_pulley, d_case + 2, h_channel], center=true);
-      translate_z(-h_channel/2) 
-        resize([w_pulley , d_case + 2, w_pulley/2]) 
+      translate_z(-h_channel/2)
+        resize([w_pulley , d_case + 2, w_pulley/2])
           arch();
     }
 
