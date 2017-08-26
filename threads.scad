@@ -198,6 +198,7 @@ module metric_thread_turns (diameter, pitch, length, internal, n_starts,
       // Start one below z = 0.  Gives an extra turn at each end.
       for (i=[-1*n_starts : n_turns+1]) {
          translate ([0, 0, i*pitch]) {
+            render() 
             metric_thread_turn (diameter, pitch, internal, n_starts,
                                 thread_size, groove, square, rectangle, angle,
                                 taper, i*pitch);
@@ -222,6 +223,7 @@ module metric_thread_turn (diameter, pitch, internal, n_starts, thread_size,
       rotate ([0, 0, i*360*fraction_circle]) {
          translate ([0, 0, i*n_starts*pitch*fraction_circle]) {
             //current_diameter = diameter - taper*(z + i*n_starts*pitch*fraction_circle);
+            render()
             thread_polyhedron ((diameter - taper*(z + i*n_starts*pitch*fraction_circle))/2,
                                pitch, internal, n_starts, thread_size, groove,
                                square, rectangle, angle);
@@ -233,7 +235,7 @@ module metric_thread_turn (diameter, pitch, internal, n_starts, thread_size,
 
 // ----------------------------------------------------------------------------
 module thread_polyhedron (radius, pitch, internal, n_starts, thread_size,
-                          groove, square, rectangle, angle)
+                          groove, square, rectangle, angle, ifac = 20)
 {
    n_segments = segments (radius*2);
    fraction_circle = 1.0/n_segments;
@@ -241,7 +243,7 @@ module thread_polyhedron (radius, pitch, internal, n_starts, thread_size,
    local_rectangle = rectangle ? rectangle : 1;
 
    h = (square || rectangle) ? thread_size*local_rectangle/2 : thread_size / (2 * tan(angle));
-   outer_r = radius + (internal ? h/20 : 0); // Adds internal relief.
+   outer_r = radius + (internal ? h/ifac : 0); // Adds internal relief.
    //echo (str ("outer_r: ", outer_r));
 
    // A little extra on square thread -- make sure overlaps cylinder.
@@ -299,6 +301,7 @@ module thread_polyhedron (radius, pitch, internal, n_starts, thread_size,
 
             // Rule for face ordering: look at polyhedron from outside: points must
             // be in clockwise order.
+            render()
             polyhedron (
                points = [
                          [-x_incr_inner/2, -inner_r, bottom*thread_size],         // [0]
@@ -333,6 +336,7 @@ module thread_polyhedron (radius, pitch, internal, n_starts, thread_size,
 
             // Rule for face ordering: look at polyhedron from outside: points must
             // be in clockwise order.
+            render()
             polyhedron (
                points = [
                          [-x_incr_inner/2, -inner_r, 0],                        // [0]
