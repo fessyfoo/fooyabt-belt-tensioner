@@ -24,6 +24,19 @@ h_nut              = 2*thickness;    // later normalized to multiple of pitch
 h_puller_top       = pitch * 2;      // amount of threads beyond the top of case
 d_puller           = d_puller_min(); // diameter of the puller
 
+// object to render
+// 0: plate,
+// 1: case,
+// 2: puller,
+// 3: nut,
+// 4: assembly,
+// 5: display,
+// 6: case1,
+// 7: case2,
+// 8: nut1,
+// 9: nut2
+object = 0;
+
 r_embed       = d_puller_min() <= d_puller ?
   d_pulley / 2 - d_pulley_nut_hole / 2 - 1 :
   0;
@@ -477,4 +490,18 @@ module test_case_bottom_inside() {
   }
 }
 
-display();
+module chose(object) {
+  if ( object == 0 ) { plate();        }
+  if ( object == 1 ) { print_case();   }
+  if ( object == 2 ) { print_puller(); }
+  if ( object == 3 ) { nut();          }
+  if ( object == 4 ) { assembly();     }
+  if ( object == 5 ) { display();      }
+  if ( object == 6 ) { case1();        }
+  if ( object == 7 ) { case2();        }
+  if ( object == 8 ) { nut1();         }
+  if ( object == 9 ) { nut2();         }
+
+}
+
+chose(object);
