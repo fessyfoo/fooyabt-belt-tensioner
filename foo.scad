@@ -1,46 +1,49 @@
 use <threads.scad>;
 
 $fs=0.1;
-$fa=3;
-
+$fa=1;
 
 // TODO
 // - flange for attaching t-nuts
 // - 2040 case.
-// - unify alternate case style dimension variables.
 
-// 4.6 pully puller wall
-// 10.8 pully gap
-// 4.3 pully puller nub
-// 5.5 hole for pully bolt
+range              = 15;    // range of movement in mm
+d_pulley           = 22;    // diameter of pulley (including clearance)
+w_pulley           = 12;    // width of pulley (including clearance)
+d_pulley_axel_hole = 5.5;   // diameter of axel hole, including tolerance
+d_pulley_nut_hole  = 10;    // hex hole to make clearence for pulley bolt
+w_extrusion        = 20;    // width of extrusion
+extrusion_tol      = 0.375; // tolerance for attachment to extrusion.
+puller_tol         = 0.5;   // tolerance around outside of puller
+puller_pillar_tol  = 0.375; // tolerance around slots of puller
+thickness          = 4;     // height of ring, width of flanges, ...
+pitch              = 2;     // distance between threads
+h_nut              = 2*thickness; // later normalized to multiple of pitch
+h_puller_top       = pitch * 2; // amount of threads beyond the top of case
 
-range              = 15; // range of movement in mm
-d_pulley           = 22;
-w_pulley           = 12;
-d_pulley_axel_hole = 5.5; // m5 + tolerance
-d_pulley_nut_hole  = 10; // hex hole to make clearence for pulley bolt
-w_extrusion        = 20;
-d_puller           = 24;
-d_puller_tol       = d_puller + 1;
-puller_pillar_tol  = 0.375;
-h_t_nut_flange     = 10;
-thickness          = 4;
-pitch              = 2;
 
+d_puller_min = d_for_pulley_clearance(w_pulley, d_pulley, d_pulley_nut_hole);
+// diameter of the puller.  if this is big enough the pulley can be pulled
+// partly through the top and nut to make use of the range
+d_puller = d_puller_min;
+
+r_embed       = d_puller_min <= d_puller ?
+  d_pulley / 2 - d_pulley_nut_hole / 2 - 1 :
+  0;
+
+h_erange      = range - r_embed > 0 ? range - r_embed : r_embed;
+
+h_case        = d_pulley + h_erange + thickness*2;
 h_puller_trim = thickness / 2;
-h_puller_top  = pitch * 2;
-
-r_embed  = d_pulley / 2 - d_pulley_nut_hole / 2 - 1;
-h_erange = range - r_embed > 0 ? range - r_embed : r_embed;
-h_nut    = 2*thickness;
-h_case   = d_pulley + h_erange + thickness*2;
-h_puller = d_pulley + h_erange + thickness + h_puller_top - h_puller_trim;
-d_case   = d_puller + thickness * 2;
+h_puller      = d_pulley + h_erange + thickness + h_puller_top - h_puller_trim;
+d_case        = d_puller + thickness * 2;
 
 
 echo(
   h_case        = h_case,
   h_puller      = h_puller,
+  d_puller      = d_puller,
+  d_puller_min  = d_puller_min,
   h_nut         = h_nut,
   range         = range,
   h_erange      = h_erange,
@@ -48,6 +51,17 @@ echo(
   h_puller_trim = h_puller_trim,
   h_puller_top  = h_puller_top
 );
+
+function d_for_pulley_clearance(w_pulley, d_pulley, d_pulley_nut_hole) =
+  let(
+    c1 = d_pulley/2,
+    a1 = d_pulley_nut_hole/2,
+    b1 = sqrt(pow(c1,2) - pow(a1,2)),
+    a2 = b1,
+    b2 = w_pulley / 2,
+    c2 = sqrt(pow(a2,2) + pow(b2,2))
+  )
+  ceil(c2 * 2) + 1 ;
 
 
 module translate_z (h) {
@@ -234,7 +248,6 @@ module arch_cutout() {
 
 module case_cutouts(
   w_flanges = thickness,
-  extrusion_tol = 0.375,
 ) {
   h_channel = h_case - thickness * 3 + thickness/2 ;
 
@@ -265,7 +278,7 @@ module case_cutouts(
   // puller path
   translate([0,0,w_flanges*1.5 + 0.01])
     difference() {
-      cylinder(d=d_puller_tol, h = h_case + w_flanges * 2 + 2);
+      cylinder(d=d_puller + puller_tol*2, h = h_case + w_flanges * 2 + 2);
       translate([0,0,-1])
         base_pillars(height = h_case + w_flanges * 2 + 4);
         arch_cutout();
@@ -276,7 +289,6 @@ module case1 () {
   w_flanges = thickness;
   h_case = h_case;
   w_case = w_extrusion + w_flanges * 2;
-  extrusion_tol = 0.375;
 
   difference() {
     hull() {
