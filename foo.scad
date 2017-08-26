@@ -5,7 +5,7 @@ $fa=1;
 
 // TODO
 // - flange for attaching t-nuts
-// - 2040 case.
+// - clearance for y-axis roller to edge of beam.
 
 // all measurements in mm
 range              = 15;    // range of movement
